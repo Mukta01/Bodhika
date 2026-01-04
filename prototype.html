@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Learning & Wellbeing Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Onboarding Styles */
+        .onboarding h1 {
+            color: #4a5568;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .onboarding p {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .chat-message {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .chat-message h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .option-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .next-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        .next-btn:hover {
+            background: #5a67d8;
+        }
+
+        .next-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .dashboard-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-section.prominent {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            border: 2px solid #667eea;
+        }
+
+        .dashboard-section.subtle {
+            opacity: 0.6;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+
+        .learning-path {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .path-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .path-content h4 {
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+
+        .path-content p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* Mood Check-in */
+        .mood-slider {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .mood-emoji {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .emoji {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .emoji.selected {
+            background: #667eea;
+            transform: scale(1.2);
+        }
+
+        /* Wellness Companion */
+        .wellness-card {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .wellness-card h4 {
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .breathing-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.8);
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #4a5568;
+            animation: breathe 4s infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Learning Content */
+        .content-flow {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .example-box {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #48bb78;
+        }
+
+        .practice-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .practice-btn:hover {
+            background: #38a169;
+        }
+
+        .help-btn {
+            background: #ed8936;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .help-btn:hover {
+            background: #dd6b20;
+        }
+
+        /* Progress View */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #667eea);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Onboarding Flow -->
+        <div id="onboarding" class="card onboarding">
+            <h1>Welcome to LearnWell!</h1>
+            <p>Let's create your personalized learning journey</p>
+            
+            <div id="question-1" class="chat-message">
+                <h3>How do you usually feel when learning something new?</h3>
+                <div class="options">
+                    <button class="option-btn" data-value="excited">Excited and ready to dive in!</button>
+                    <button class="option-btn" data-value="nervous">A bit nervous but curious</button>
+                    <button class="option-btn" data-value="overwhelmed">Sometimes overwhelmed</button>
+                    <button class="option-btn" data-value="calm">I prefer taking it slow and steady</button>
+                </div>
+            </div>
+
+            <div id="question-2" class="chat-message hidden">
+                <h3>When you're stuck on a problem, what do you usually do?</h3>
+                <div class="options">
+                    <button class="option-btn" data-value="ask">Ask for help right away</button>
+                    <button class="option-btn" data-value="try">Try different approaches first</button>
+                    <button class="option-btn" data-value="struggle">Keep struggling until I figure it out</button>
+                    <button class="option-btn" data-value="break">Take a break and come back later</button>
+                </div>
+            </div>
+
+            <div id="question-3" class="chat-message hidden">
+                <h3>How do you handle study pressure?</h3>
+                <div class="options">
+                    <button class="option-btn" data-value="motivated">It motivates me to do better</button>
+                    <button class="option-btn" data-value="manageable">I can manage it well</button>
+                    <button class="option-btn" data-value="stressful">It makes me feel stressed</button>
+                    <button class="option-btn" data-value="anxious">It makes me very anxious</button>
+                </div>
+            </div>
+
+            <button id="next-btn" class="next-btn" disabled>Next</button>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <div class="dashboard-header">
+                <h1>Good morning, Alex!</h1>
+                <p>Ready to learn something amazing today?</p>
+            </div>
+
+            <div class="nav-tabs">
+                <div class="nav-tab active" data-tab="home">Home</div>
+                <div class="nav-tab" data-tab="learn">Learn</div>
+                <div class="nav-tab" data-tab="progress">Progress</div>
+            </div>
+
+            <!-- Home Tab -->
+            <div id="home-tab" class="tab-content">
+                <div id="learning-path-section" class="dashboard-section">
+                    <div class="section-title">📚 Today's Learning Path</div>
+                    <div class="learning-path">
+                        <div class="path-icon">🔢</div>
+                        <div class="path-content">
+                            <h4>Basic Algebra</h4>
+                            <p>Gentle introduction with examples</p>
+                        </div>
+                    </div>
+                    <div class="learning-path">
+                        <div class="path-icon">📖</div>
+                        <div class="path-content">
+                            <h4>Reading Comprehension</h4>
+                            <p>Short story analysis</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mood-section" class="dashboard-section">
+                    <div class="section-title">😊 How are you feeling today?</div>
+                    <div class="mood-emoji">
+                        <span class="emoji" data-mood="1">😔</span>
+                        <span class="emoji" data-mood="2">😐</span>
+                        <span class="emoji" data-mood="3">🙂</span>
+                        <span class="emoji" data-mood="4">😊</span>
+                        <span class="emoji" data-mood="5">🤗</span>
+                    </div>
+                    <p style="text-align: center; color: #718096; font-size: 14px;">Tap an emoji to share your mood</p>
+                </div>
+
+                <div id="wellness-section" class="dashboard-section">
+                    <div class="section-title">🌸 Wellness Companion</div>
+                    <div class="wellness-card">
+                        <h4>Take a mindful moment</h4>
+                        <div class="breathing-circle">Breathe</div>
+                        <p style="font-size: 14px; color: #4a5568;">Follow the circle's rhythm</p>
+                    </div>
+                </div>
+
+                <div id="community-section" class="dashboard-section subtle">
+                    <div class="section-title">👥 Study Together</div>
+                    <p style="color: #718096;">Connect with study buddies (Coming soon!)</p>
+                </div>
+            </div>
+
+            <!-- Learn Tab -->
+            <div id="learn-tab" class="tab-content hidden">
+                <div class="dashboard-section">
+                    <div class="section-title">🔢 Basic Algebra - Variables</div>
+                    
+                    <div class="example-box">
+                        <h4 style="color: #48bb78; margin-bottom: 10px;">📝 Example</h4>
+                        <p>If x = 5, what is x + 3?</p>
+                        <p style="margin-top: 10px; color: #4a5568;">We substitute 5 for x: 5 + 3 = 8</p>
+                    </div>
+
+                    <div class="content-flow">
+                        <h4 style="margin-bottom: 15px;">💡 Explanation</h4>
+                        <p style="line-height: 1.6;">Variables are like containers that hold numbers. When we see x = 5, we know that wherever we see x, we can replace it with 5.</p>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="practice-btn">Practice Now</button>
+                        <button class="help-btn">Need another example?</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <div class="section-title">📖 Reading - Short Story</div>
+                    <div class="content-flow">
+                        <p style="line-height: 1.8; margin-bottom: 15px;">"The little cat walked slowly through the garden, sniffing at the colorful flowers..."</p>
+                        <button class="practice-btn">Continue Reading</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tab -->
+            <div id="progress-tab" class="tab-content hidden">
+                <div class="dashboard-section">
+                    <div class="section-title">📈 Your Learning Journey</div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #4a5568; margin-bottom: 10px;">Overall Progress</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                        <p style="text-align: center; color: #718096; font-size: 14px;">You're doing great! Keep it up! 🌟</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">Lessons Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Days Streak</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Skills Improved</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">85%</div>
+                            <div class="stat-label">Confidence Level</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <div class="section-title">🎯 Recent Achievements</div>
+                    <div style="background: #f7fafc; border-radius: 10px; padding: 15px;">
+                        <p style="color: #48bb78; font-weight: 600;">🏆 Algebra Explorer</p>
+                        <p style="color: #718096; font-size: 14px; margin-top: 5px;">Completed 5 algebra lessons!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Learning State Vector [P1, P2, P3, P4]
+        // P1: Overwhelmed Understander, P2: Pressure Reactor, P3: Silent Struggler, P4: Drifted Doer
+        let learningVector = [0.3, 0.2, 0.4, 0.1];
+        let currentQuestion = 1;
+        let answers = {};
+
+        // Onboarding Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            setupOnboarding();
+            setupDashboard();
+        });
+
+        function setupOnboarding() {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            const nextButton = document.getElementById('next-btn');
+
+            optionButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove selected class from siblings
+                    const siblings = this.parentNode.querySelectorAll('.option-btn');
+                    siblings.forEach(sibling => sibling.classList.remove('selected'));
+                    
+                    // Add selected class to clicked button
+                    this.classList.add('selected');
+                    
+                    // Store answer
+                    answers[`question${currentQuestion}`] = this.dataset.value;
+                    
+                    // Enable next button
+                    nextButton.disabled = false;
+                });
+            });
+
+            nextButton.addEventListener('click', function() {
+                if (currentQuestion < 3) {
+                    // Hide current question
+                    document.getElementById(`question-${currentQuestion}`).classList.add('hidden');
+                    
+                    // Show next question
+                    currentQuestion++;
+                    document.getElementById(`question-${currentQuestion}`).classList.remove('hidden');
+                    
+                    // Disable next button until selection
+                    this.disabled = true;
+                    
+                    // Update button text for last question
+                    if (currentQuestion === 3) {
+                        this.textContent = 'Start Learning!';
+                    }
+                } else {
+                    // Calculate learning vector based on answers
+                    calculateLearningVector();
+                    
+                    // Show dashboard
+                    document.getElementById('onboarding').classList.add('hidden');
+                    document.getElementById('dashboard').classList.remove('hidden');
+                    
+                    // Adapt dashboard based on vector
+                    adaptDashboard();
+                }
+            });
+        }
+
+        function calculateLearningVector() {
+            // Mock AI logic to calculate vector based on answers
+            const q1 = answers.question1;
+            const q2 = answers.question2;
+            const q3 = answers.question3;
+
+            // P1: Overwhelmed Understander
+            if (q1 === 'overwhelmed' || q1 === 'calm') learningVector[0] += 0.3;
+            if (q2 === 'struggle') learningVector[0] += 0.2;
+
+            // P2: Pressure Reactor
+            if (q3 === 'stressful' || q3 === 'anxious') learningVector[1] += 0.4;
+            if (q1 === 'nervous') learningVector[1] += 0.2;
+
+            // P3: Silent Struggler
+            if (q2 === 'struggle') learningVector[2] += 0.3;
+            if (q2 === 'try') learningVector[2] += 0.1;
+
+            // P4: Drifted Doer
+            if (q2 === 'break') learningVector[3] += 0.3;
+            if (q1 === 'calm') learningVector[3] += 0.1;
+
+            // Normalize vector to keep values between 0 and 1
+            for (let i = 0; i < learningVector.length; i++) {
+                learningVector[i] = Math.min(1, learningVector[i]);
+            }
+
+            console.log('Learning Vector:', learningVector);
+        }
+
+        function adaptDashboard() {
+            const learningPathSection = document.getElementById('learning-path-section');
+            const moodSection = document.getElementById('mood-section');
+            const wellnessSection = document.getElementById('wellness-section');
+            const communitySection = document.getElementById('community-section');
+
+            // Reset all sections
+            [learningPathSection, moodSection, wellnessSection, communitySection].forEach(section => {
+                section.className = 'dashboard-section';
+            });
+
+            // Adapt based on highest vector values
+            const maxIndex = learningVector.indexOf(Math.max(...learningVector));
+
+            switch(maxIndex) {
+                case 0: // Overwhelmed Understander
+                    learningPathSection.classList.add('prominent');
+                    wellnessSection.classList.add('prominent');
+                    communitySection.classList.add('subtle');
+                    break;
+                case 1: // Pressure Reactor
+                    wellnessSection.classList.add('prominent');
+                    moodSection.classList.add('prominent');
+                    break;
+                case 2: // Silent Struggler
+                    communitySection.classList.add('prominent');
+                    learningPathSection.classList.add('prominent');
+                    break;
+                case 3: // Drifted Doer
+                    learningPathSection.classList.add('prominent');
+                    moodSection.classList.add('prominent');
+                    wellnessSection.classList.add('subtle');
+                    break;
+            }
+        }
+
+        function setupDashboard() {
+            // Tab navigation
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+                    
+                    // Update active tab
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target content
+                    tabContents.forEach(content => content.classList.add('hidden'));
+                    document.getElementById(`${targetTab}-tab`).classList.remove('hidden');
+                });
+            });
+
+            // Mood check-in
+            const moodEmojis = document.querySelectorAll('.emoji');
+            moodEmojis.forEach(emoji => {
+                emoji.addEventListener('click', function() {
+                    moodEmojis.forEach(e => e.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Update vector based on mood
+                    const mood = parseInt(this.dataset.mood);
+                    if (mood <= 2) {
+                        learningVector[1] = Math.min(1, learningVector[1] + 0.1); // Increase stress
+                    } else if (mood >= 4) {
+                        learningVector[1] = Math.max(0, learningVector[1] - 0.1); // Decrease stress
+                    }
+                    
+                    console.log('Updated Learning Vector:', learningVector);
+                    adaptDashboard();
+                });
+            });
+
+            // Practice buttons
+            const practiceButtons = document.querySelectorAll('.practice-btn');
+            practiceButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Simulate completing practice
+                    learningVector[0] = Math.max(0, learningVector[0] - 0.05); // Reduce overwhelm
+                    console.log('Practice completed. Updated vector:', learningVector);
+                    
+                    this.textContent = 'Great job! ✨';
+                    this.style.background = '#48bb78';
+                    setTimeout(() => {
+                        this.textContent = 'Practice More';
+                        this.style.background = '#48bb78';
+                    }, 2000);
+                });
+            });
+
+            // Help buttons
+            const helpButtons = document.querySelectorAll('.help-btn');
+            helpButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Simulate asking for help
+                    learningVector[2] = Math.max(0, learningVector[2] - 0.1); // Reduce silent struggling
+                    console.log('Help requested. Updated vector:', learningVector);
+                    
+                    this.textContent = 'Here\'s another example! 📝';
+                    this.style.background = '#48bb78';
+                    setTimeout(() => {
+                        this.textContent = 'Need another example?';
+                        this.style.background = '#ed8936';
+                    }, 3000);
+                });
+            });
+        }
+
+        // Simulate vector evolution over time
+        setInterval(() => {
+            // Slowly adjust vectors based on usage patterns
+            learningVector[0] = Math.max(0, learningVector[0] - 0.001); // Gradual confidence building
+            
+            // Re-adapt dashboard if significant changes
+            const oldMax = learningVector.indexOf(Math.max(...learningVector));
+            setTimeout(() => {
+                const newMax = learningVector.indexOf(Math.max(...learningVector));
+                if (oldMax !== newMax) {
+                    adaptDashboard();
+                }
+            }, 100);
+        }, 10000); // Every 10 seconds
+    </script>
+</body>
+</html>
